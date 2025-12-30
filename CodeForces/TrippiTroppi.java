@@ -18,5 +18,6 @@ public class TrippiTroppi {
             }
             System.out.println();
         }
+        scan.close();
     }
 }

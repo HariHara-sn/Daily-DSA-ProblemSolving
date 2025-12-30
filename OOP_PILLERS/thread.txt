@@ -1,0 +1,932 @@
+Part 1 — Introduction to Threading (0:00 – 0:10)
+💡 What is a Thread?
+
+A thread is a lightweight sub-process — smallest unit of CPU execution.
+
+In Java, every program has at least one main thread (the one that runs main()).
+
+📘 Why use Threads?
+
+To perform multiple tasks simultaneously.
+
+Better CPU utilization.
+
+Example: Media player — one thread plays music, another displays visuals.
+
+🧠 Analogy:
+
+Imagine a restaurant:
+One waiter = one thread.
+More waiters (threads) can serve customers (tasks) simultaneously.
+package training.Basics;
+
+Part 2 — Thread Lifecycle (0:10 – 0:35)
+🧭 States of a Thread:
+NEW → RUNNABLE → RUNNING → WAITING → TERMINATED
+
+State	Description
+NEW	----Thread created but not started
+RUNNABLE----	After start() — ready to run
+RUNNING	-----When scheduler picks it
+WAITING / SLEEPING ---	Temporarily paused
+TERMINATED ---	Finished execution
+
+class Demo extends Thread {
+    public void run() {
+        System.out.println("Thread is running...");
+    }
+
+    public static void main(String[] args) {
+        Demo d = new Demo(); // NEW
+        d.start();           // RUNNABLE → RUNNING
+    }
+}
+
+start() — internally calls run() method → creates a separate call stack.
+
+internal segment
+void start()
+{ run();
+}
+
+Part 3 — Creating Threads 
+✅ Method 1: By extending Thread class
+class A extends Thread {
+    public void run() {
+        System.out.println("Task executed by " + Thread.currentThread().getName());
+    }
+
+    public static void main(String[] args) {
+        A t1 = new A();
+        A t2 = new A();
+        t1.start();
+        t2.start();
+    }
+}
+
+ Explain: Each start() = new thread starts execution of run() in parallel.
+
+Method 2: By implementing Runnable interface
+class B implements Runnable {
+    public void run() {
+        System.out.println("Running via Runnable");
+    }
+
+    public static void main(String[] args) {
+        B b = new B();
+        Thread t = new Thread(b); // pass Runnable object
+        t.start();
+    }
+}
+
+Comparison Table:
+
+extends Thread----	implements Runnable
+Inherits Thread class	----Implements Runnable interface
+Not good for multiple inheritance ----	Recommended way
+Simpler for beginners ---	More flexible (used in real apps)
+
+
+Part 4 — Thread Methods (1:10 – 1:30)
+Common Thread Methods
+Method	Description
+start()	--Starts the thread (calls run() internally)
+run()--	Code executed by the thread
+sleep(ms)	--Temporarily pauses thread
+join()	--Waits for one thread to finish
+isAlive()--	Checks if thread is still running
+setName() / getName()---	Set or get thread name
+setPriority()---	Assign priority (1–10)
+
+Example:
+
+class Test extends Thread {
+    public void run() {
+        for (int i = 1; i <= 3; i++) {
+            System.out.println(Thread.currentThread().getName() + " : " + i);
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {}
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        Test t1 = new Test();
+        Test t2 = new Test();
+        t1.setName("Good");
+        t2.setName("Deeds");
+        t1.start();
+        t2.start();
+
+        t1.join(); // main waits until t1 finishes
+        System.out.println("Main thread ends");
+    }
+}
+Results
+ output interleaving — demonstrates concurrency.
+
+Thread Scheduler.
+
+Part 5 — Multithreading (1:30 – 1:55)
+💡 What is Multithreading?
+
+Executing multiple threads simultaneously — improves performance.
+
+Example:
+
+One thread for downloading file
+Another for UI update
+Another for playing sound
+
+Example:
+
+class Download extends Thread {
+    public void run() {
+        for (int i = 1; i <= 5; i++)
+            System.out.println("Downloading file " + i);
+    }
+}
+class Music extends Thread {
+    public void run() {
+        for (int i = 1; i <= 5; i++)
+            System.out.println("Playing music " + i);
+    }
+}
+public class App {
+    public static void main(String[] args) {
+        new Download().start();
+        new Music().start();
+    }
+}
+
+Result: Outputs interleave → proves both running together.
+
+Synchronization (1:55 – 2:10)
+⚠️ Problem:
+
+When multiple threads access same resource → inconsistent data.
+
+💡 Solution:
+
+Use synchronized keyword to lock shared resource.
+
+Example
+
+class Counter {
+    int count = 0;
+    synchronized void increment() {
+        count++;
+    }
+}
+
+public class SyncExample {
+    public static void main(String[] args) throws Exception {
+        Counter c = new Counter();
+        Thread t1 = new Thread(() -> {
+            for (int i = 0; i < 1000; i++) c.increment();
+        });
+        Thread t2 = new Thread(() -> {
+            for (int i = 0; i < 1000; i++) c.increment();
+        });
+        t1.start(); t2.start();
+        t1.join(); t2.join();
+        System.out.println("Count = " + c.count);
+    }
+}
+Result:
+Without synchronization: Result < 2000
+With synchronization: Exact 2000
+Thread-safe operation.
+
+What is the Runnable Interface?
+
+The Runnable interface is part of java.lang package.
+It represents a task that can be executed by a thread.
+It is used when you want to define the code that a thread should execute, but you don’t want to extend the Thread class.
+
+Declaration:
+
+public interface Runnable {
+    public abstract void run();
+}
+
+So, it has only one abstract method — run(), which makes it a Functional Interface (used in lambda expressions too).
+
+Why do we need Runnable Interface?
+If you extend the Thread class, your class cannot extend any other class (since Java doesn’t support multiple inheritance).
+👉 To overcome this limitation, we implement the Runnable interface instead of extending Thread.
+
+Syntax Example
+class MyRunnable implements Runnable {
+    public void run() {
+        System.out.println("Thread is running using Runnable Interface...");
+    }
+}
+
+public class TestRunnable {
+    public static void main(String[] args) {
+        MyRunnable r = new MyRunnable();         // Step 1: Create Runnable object
+        Thread t = new Thread(r);                // Step 2: Pass Runnable to Thread
+        t.start();                               // Step 3: Start the Thread
+    }
+}
+
+
+Output:
+
+Thread is running using Runnable Interface...
+Step-by-step Explanation
+
+Define a task by implementing Runnable and overriding the run() method.
+Pass that task to a Thread object.
+Call start() on the Thread object to start execution.
+
+Internally, it calls the run() method of the Runnable target.
+
+Real-life Analogy
+
+Think of a Runnable as a job or task, and a Thread as a worker.
+The job (Runnable) contains what to do.
+The worker (Thread) executes the job.
+You can assign different Runnables to different Threads, or even reuse the same Runnable for multiple threads.
+
+Using Lambda Expression
+
+Since Runnable has only one abstract method, we can use a lambda:
+
+public class LambdaRunnable {
+    public static void main(String[] args) {
+        Thread t = new Thread(() -> {
+            System.out.println("Running thread using Lambda Runnable!");
+        });
+        t.start();
+    }
+}
+
+Runnable vs Thread
+Feature	Thread Class --	Runnable Interface
+Inheritance	Must extend Thread---	Can implement Runnable
+Flexibility	Can’t extend another class	--- Can extend other classes
+Structure	Has run() method directly	--- run() inside Runnable, passed to Thread
+Preferred?	Not recommended for large apps	--- ✅ Preferred (cleaner, flexible)
+
+What is the difference between calling run() and start()?
+A:
+start() → Creates a new thread and then calls run() internally.
+run() → Just calls the method in the current thread (no new thread created).
+
+how many run() can be present inside a class?
+A class can have only one run() method that matches the signature defined by Runnable:
+public void run()
+But —
+you can have other methods named run with different parameters or access modifiers — that’s called method overloading, not overriding.
+
+Why only one real run()?
+
+Because the Thread class and the Runnable interface both depend on a specific signature:
+public void run()
+When you call:
+t.start();
+→ Internally, the JVM looks for that exact method signature to execute inside the new thread.
+If your class has multiple overloaded run() methods, only the no-argument, public void run() will be called automatically.
+EG:
+class MyThread implements Runnable {
+    public void run() { // ✅ This one is called automatically
+        System.out.println("Thread is running...");
+    }
+    
+    public void run(int x) { // Overloaded method
+        System.out.println("Run with parameter: " + x);
+    }
+    
+    public void run(String msg) { // Another overload
+        System.out.println(msg);
+    }
+}
+
+public class TestRun {
+    public static void main(String[] args) {
+        Thread t = new Thread(new MyThread());
+        t.start();               // Calls run() with no args automatically
+
+        MyThread obj = new MyThread();
+        obj.run(5);              // Manual call
+        obj.run("Hello");        // Manual call
+    }
+}
+OP:
+Thread is running...
+Run with parameter: 5
+Hello
+
+Concept	Meaning
+✅ public void run()	Automatically called when thread starts
+⚙️ run(int x) or others	Normal overloaded methods, not thread entry points
+🚫 Multiple same-signature run()
+
+So, you can have many run() methods (overloaded),
+but only one valid Runnable run() will be treated as the thread’s execution entry point.
+
+Modern way of running a thread
+new Thread(() -> {
+    System.out.println("Task 1 running");
+}).start();
+
+new Thread(() -> {
+    System.out.println("Task 2 running");
+}).start();
+
+The flow when you call start()
+
+class MyThread extends Thread {
+    public void run() {
+        System.out.println(Thread.currentThread().getName() + " is running");
+    }
+}
+
+public class Demo {
+    public static void main(String[] args) {
+        MyThread t1 = new MyThread();
+        t1.start();  // ✅ starts new thread
+        t1.run();    // ❌ runs in main thread only
+
+        System.out.println("Main thread ends");
+    }
+}
+
+OP:
+Thread-0 is running
+main is running
+Main thread ends
+
+
+Let’s trace this visually 👇
+
+✅ Step-by-step JVM process
+Step	What Happens
+1️⃣	You create a Thread object → MyThread t = new MyThread();
+2️⃣	You call t.start();
+3️⃣	JVM checks thread’s internal state → if NEW, then ready to start
+4️⃣	JVM allocates a separate call stack (independent execution path) for this thread
+5️⃣	JVM internally calls the thread’s native start0() (C/C++ native code)
+6️⃣	Once the new thread is started, JVM automatically calls t.run() inside that new thread
+7️⃣	Your run() method executes independently while the main thread continues in parallel
+
+So start() is like telling JVM:
+
+“Hey, create a new CPU path for me and execute my run() inside it!”
+
+
+
+What if you call run() directly?
+
+Then no new thread is created.
+
+The run() code just executes as a normal method in the current (main) thread.
+You can prove this using Thread.currentThread().getName() 👇
+
+class Test extends Thread {
+    public void run() {
+        System.out.println("Running in: " + Thread.currentThread().getName());
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Test t = new Test();
+        t.run();   // normal call
+        t.start(); // real thread
+    }
+}
+
+
+Output:
+
+Running in: main
+Running in: Thread-0
+
+run() = normal method call
+start() = new thread + internal call to run()
+
+Internals of Thread class (simplified)
+
+Here’s a simplified view of the actual Thread class source logic:
+
+public class Thread implements Runnable {
+    private Runnable target;   // holds the runnable task
+    
+    public Thread(Runnable target) {
+        this.target = target;
+    }
+
+    public synchronized void start() {
+        start0();  // native method that creates a new thread
+    }
+
+    private native void start0();
+
+    public void run() {
+        if (target != null)
+            target.run();  // runs the Runnable's code
+    }
+}
+
+
+So when you do:
+
+Thread t = new Thread(new MyRunnable());
+t.start();
+
+
+the JVM will eventually call:
+
+target.run();
+
+
+on a new thread created by start0().
+
+🧩 6️⃣ Flow summary (to show students)
+new Thread(...) → start() 
+             ↓
+   JVM calls start0() (native)
+             ↓
+   JVM creates a new thread
+             ↓
+   JVM calls run() inside that thread
+
+System.out.println(Thread.currentThread().getName());
+This’ll clearly see which thread executes which code.
+
+The problem before locks
+
+In multithreading, multiple threads often try to access the same resource (like a shared variable, object, or file).
+
+For example 👇
+
+class Counter {
+    int count = 0;
+
+    void increment() {
+        count++;
+    }
+}
+
+
+Now run this:
+
+class Main {
+    public static void main(String[] args) throws InterruptedException {
+        Counter c = new Counter();
+
+        Thread t1 = new Thread(() -> {
+            for (int i = 0; i < 1000; i++) c.increment();
+        });
+
+        Thread t2 = new Thread(() -> {
+            for (int i = 0; i < 1000; i++) c.increment();
+        });
+
+        t1.start();
+        t2.start();
+
+        t1.join();
+        t2.join();
+
+        System.out.println("Final count = " + c.count);
+    }
+}
+
+⚠️ Output problem
+
+Expected count = 2000,
+but you might get something like:
+
+Final count = 1857
+
+
+That’s because both threads interfere with each other — a race condition.
+Both read and write the same memory at the same time.
+
+🧠 2️⃣ What is a Lock?
+
+A Lock is a mechanism to restrict access so that only one thread can use a critical section (shared code) at a time.
+
+It ensures thread safety by allowing mutual exclusion (mutex) — meaning one thread “locks” the code while it’s working, and others must wait until the lock is released.
+
+🧩 3️⃣ Simplest Lock: synchronized keyword
+
+Java gives an easy built-in lock via synchronized.
+
+class Counter {
+    int count = 0;
+
+    synchronized void increment() {
+        count++;
+    }
+}
+
+
+Now, when one thread is executing increment(),
+the other thread has to wait until it’s done.
+
+✅ Output now:
+
+Final count = 2000
+
+🧩 4️⃣ How synchronized works
+
+When a thread enters a synchronized method or block, it acquires the lock on that object.
+
+Other threads trying to access the same synchronized block/method on the same object must wait.
+
+When the thread finishes, it releases the lock automatically.
+
+Example with synchronized block
+class Printer {
+    void printDocs(String name) {
+        synchronized(this) { // lock only this part
+            for (int i = 1; i <= 3; i++) {
+                System.out.println(name + " printing page " + i);
+                try { Thread.sleep(500); } catch (InterruptedException e) {}
+            }
+        }
+    }
+}
+
+
+So if multiple threads share one Printer object, they’ll print one at a time (no mixing).
+
+🧩 5️⃣ Advanced Lock — ReentrantLock (from java.util.concurrent.locks)
+
+Java also provides a manual lock class with more control.
+
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+class Counter {
+    int count = 0;
+    Lock lock = new ReentrantLock();
+
+    void increment() {
+        lock.lock();  // acquire lock
+        try {
+            count++;
+        } finally {
+            lock.unlock();  // always release lock
+        }
+    }
+}
+
+
+✅ ReentrantLock gives you more control:
+
+You can tryLock() (attempt without waiting)
+
+You can check if it’s locked()
+
+You must manually unlock it (so finally block is crucial)
+
+🧩 6️⃣ Difference between synchronized and ReentrantLock
+Feature ----	synchronized ---	ReentrantLock
+Lock release--- 	Automatic---	Manual (unlock())
+Fairness (who gets lock next) ---	No ---	Can be made fair
+Try to acquire lock without waiting	--- No	---Yes (tryLock())
+Condition variables (wait/signal)	---via wait()/notify() ---	via newCondition()
+Readability ---	Simple ---	More flexible
+🧠
+💡 Teaching analogy
+Think of a lock like a bathroom key 🚪 — only one thread can enter.
+When it’s done, it gives back the key so the next person (thread) can go in.
+synchronized = automatic door closer
+ReentrantLock = manual key you must lock/unlock yourself
+
+
+
+Example for Synchronize:
+class Printer
+{
+	void printPage(String Doc) 
+	{
+		for(int i=0;i<=5;i++)
+		{
+			System.out.println(Doc+" - "+i);
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+	}
+}
+class Mythread extends Thread
+{
+	Printer printer;
+	String Doc;
+	Mythread(Printer p,String D)
+	{
+		printer=p;
+		Doc=D;
+	}
+	public void run()
+	{
+		printer.printPage(Doc);
+	}
+}
+
+public class MainFunction {
+    public static void main(String[] args) {
+    	Printer p= new Printer();
+    	Mythread t1=new Mythread(p,"ASK - ");
+    	Mythread t2=new Mythread(p,"SEED - ");
+    	
+    	t1.start();
+    	t2.start();
+    	
+          }
+}
+
+
+🆚 4️⃣ Thread vs Runnable — Comparison Table
+Feature	       extends Thread	  implements Runnable
+Inheritance --	  Not possible to extend any other class --	Can still extend other classes
+Flexibility	-- Less flexible --	More flexible
+Reusability	-- Each class must be a Thread	 --- Can share same Runnable with multiple threads
+Best Practice---	❌ Not recommended (old style) --	✅ Recommended (modern style)
+Object Type --	Thread is the thread	--- Runnable is executed by a thread
+
+
+Example:
+class A extends Thread {
+    public void run() {
+        System.out.println("Thread A running...");
+    }
+}
+
+class B implements Runnable {
+    public void run() {
+        System.out.println("Thread B running...");
+    }
+}
+
+public class TestThreads {
+    public static void main(String[] args) {
+        A t1 = new A();
+        Thread t2 = new Thread(new B());
+
+        t1.start();
+        t2.start();
+    }
+}
+Situation	Choose
+You just need one simple thread	extends Thread
+You want to share data between threads or reuse logic	implements Runnable
+You are using thread pooling or executors (in real projects)
+
+what happens if t1.start(). if no run() in thread class?
+Scenario:
+class MyThread extends Thread {
+    // No run() method here
+}
+
+public class Test {
+    public static void main(String[] args) {
+        MyThread t1 = new MyThread();
+        t1.start();
+    }
+}
+Answer:
+Compilation: ✅
+No error — this is perfectly valid Java code.
+
+✅ Runtime: ✅
+The thread starts successfully — but nothing happens visibly.
+
+When you call:
+t1.start();
+
+The Thread class internally calls:
+t1.run();
+But since you did not override run(),
+the default implementation of run() from Thread class executes.
+Default Implementation (inside Thread class):
+public void run() {
+    if (target != null) {
+        target.run();
+    }
+}
+
+
+👉 Here, target refers to the Runnable object that might have been passed to the thread’s constructor.
+
+If you didn’t pass any Runnable, target is null.
+
+
+
+Thread Life Cycle in Java
+
+Every thread in Java goes through 5 main states (as per the Thread.State enum in Java):
+
+Stage	Description
+1️⃣ New (Born)	Thread object is created but not yet started.
+2️⃣ Runnable (Ready to Run)	After start() is called, thread is ready and waiting for CPU scheduling.
+3️⃣ Running	Thread scheduler picks it — now it’s executing run().
+4️⃣ Blocked / Waiting / Sleeping	Thread temporarily paused (due to I/O, sleep(), wait(), etc.).
+5️⃣ Terminated (Dead)	run() method completes or thread is stopped.
+🧩 🧱 Diagram (Conceptually)
+          ┌──────────────┐
+          │     New      │
+          └──────┬───────┘
+                 │  start()
+                 ▼
+          ┌──────────────┐
+          │   Runnable   │
+          └──────┬───────┘
+                 │  gets CPU
+                 ▼
+          ┌──────────────┐
+          │   Running    │
+          └──────┬───────┘
+     sleep(), wait(), I/O │
+                 ▼
+          ┌──────────────┐
+          │ Blocked/Wait │
+          └──────┬───────┘
+                 │ resume(), notify(), I/O done
+                 ▼
+          ┌──────────────┐
+          │ Terminated   │
+          └──────────────┘
+
+🧠 Example Code to Show States
+class DemoThread extends Thread {
+    public void run() {
+        System.out.println("Thread is Running...");
+        try {
+            Thread.sleep(1000); // moves to TIMED_WAITING state
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Thread is finishing...");
+    }
+}
+
+public class MainFunction {
+    public static void main(String[] args) throws InterruptedException {
+        DemoThread t1 = new DemoThread();
+
+        System.out.println("1️⃣ State after creation: " + t1.getState()); // NEW
+        t1.start();
+
+        System.out.println("2️⃣ State after start(): " + t1.getState()); // RUNNABLE
+
+        Thread.sleep(100); // give time for t1 to start
+        System.out.println("3️⃣ State after short delay: " + t1.getState()); // RUNNABLE or TIMED_WAITING
+
+        t1.join();
+        System.out.println("4️⃣ Final State: " + t1.getState()); // TERMINATED
+    }
+}
+
+🧩 Output (Typical)
+1️⃣ State after creation: NEW
+2️⃣ State after start(): RUNNABLE
+Thread is Running...
+3️⃣ State after short delay: TIMED_WAITING
+Thread is finishing...
+4️⃣ Final State: TERMINATED
+
+🧠 Short Notes for Class:
+State	Trigger	Meaning
+NEW	Object created (new Thread())	Thread not yet started
+RUNNABLE	start()	Ready for CPU
+RUNNING	Scheduler picks it	Executes run()
+BLOCKED/WAITING	sleep(), wait(), join()	Temporarily paused
+TERMINATED	run() completes	Thread ends
+
+Commonly Used Methods in Thread Class
+Method	Description
+start()	Starts a new thread — internally calls run()
+run()	Code to execute inside the thread
+sleep(ms)	Pauses current thread for given milliseconds
+join()	Waits for one thread to finish before continuing
+getName() / setName()	Gets or sets the thread name
+getId()	Returns unique ID assigned to the thread
+getState()	Returns thread’s current state
+isAlive()	Checks if thread is still running
+setPriority(int)	Sets thread’s priority (1–10)
+getPriority()	Gets thread’s current priority
+yield()	Temporarily pauses current thread to give others a chance
+interrupt()	Sends an interrupt signal to a sleeping or waiting thread
+currentThread()	Returns a reference to the currently running thread
+🧠 2️⃣ Thread Scheduler
+📖 Definition:
+
+The Thread Scheduler is a part of the JVM that decides which thread runs next when multiple threads are ready (Runnable).
+
+⚙️ Scheduler Characteristics:
+
+The scheduling is handled by JVM & OS — not by the programmer.
+
+You can only suggest (via priority), not control.
+
+Every time slice, scheduler picks one Runnable thread to execute.
+
+⚙️ Thread Priorities
+
+Java priorities range from 1 to 10:
+
+Thread.MIN_PRIORITY = 1
+Thread.NORM_PRIORITY = 5  // default
+Thread.MAX_PRIORITY = 10
+
+
+🔹 Example:
+
+t1.setPriority(Thread.MAX_PRIORITY);
+t2.setPriority(Thread.MIN_PRIORITY);
+
+
+⚠️ Priority doesn’t guarantee execution order — it just gives a hint to the scheduler.
+
+🧩 3️⃣ Wait(), Notify(), and NotifyAll()
+
+These are Object class methods, not Thread methods.
+
+Method	Meaning
+wait()	Makes a thread go into waiting state until another thread calls notify()
+notify()	Wakes up one thread waiting on the same object
+notifyAll()	Wakes up all waiting threads on the same object
+
+🧠 Used for communication between threads (called Inter-Thread Communication).
+
+⚙️ 4️⃣ Simple Example — wait() and notify()
+
+Let’s make it super simple 👇
+
+class SharedResource {
+    synchronized void produce() {
+        System.out.println("Producer: Producing...");
+        try {
+            wait();  // release lock and wait
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Producer: Resumed after notification!");
+    }
+
+    synchronized void consume() {
+        System.out.println("Consumer: Waiting 2 seconds before notifying...");
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        notify(); // wake up waiting thread
+        System.out.println("Consumer: Notified producer!");
+    }
+}
+
+public class MainFunction {
+    public static void main(String[] args) {
+        SharedResource obj = new SharedResource();
+
+        Thread producer = new Thread(() -> obj.produce());
+        Thread consumer = new Thread(() -> obj.consume());
+
+        producer.start();
+        consumer.start();
+    }
+}
+
+🧠 Explanation
+
+Both threads share the same object obj.
+
+producer enters produce(), locks the object, then calls wait() → releases the lock and waits.
+
+consumer gets the lock, runs consume(), and after 2 seconds calls notify().
+
+notify() wakes the waiting producer thread.
+
+producer resumes from where it left (after wait()).
+
+🔍 Output (Expected)
+Producer: Producing...
+Consumer: Waiting 2 seconds before notifying...
+Consumer: Notified producer!
+Producer: Resumed after notification!
+
+🧩 5️⃣ Important Rules
+
+wait(), notify(), and notifyAll() can be called only inside a synchronized block or method.
+Otherwise → IllegalMonitorStateException.
+
+The thread must own the object’s lock before calling them.
+
+wait() releases the lock.
+
+notify() wakes up one waiting thread.
+
+notifyAll() wakes up all waiting threads.

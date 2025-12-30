@@ -17,5 +17,6 @@ public class VanyaFence {
                 }
             }
             System.out.println(count);
+            sc.close();
     }
 }

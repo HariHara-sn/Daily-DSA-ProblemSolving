@@ -1,7 +1,6 @@
-import java.util.HashMap;
-import java.util.Map;
-
-public class MostCommonWord {
+import java.util.*;
+//count most freq word and return that word
+public class Hashmap_1 {
     public static void main(String[] args) {
         String paragraph = "Bob hit a ball, the hit BALL flew far after it was hit.";
         String[] banned = { "hit" };
@@ -20,7 +19,6 @@ class Solution {
         for (String e : arr) {
             map.put(e, map.getOrDefault(e, 0) + 1);
         }
-        System.out.print(map + " ");
         for(String ban : banned) {
             map.remove(ban);
         }
