@@ -15,7 +15,7 @@ public class MaxRepeatingSubstring {
         StringBuilder sb = new StringBuilder(sequence);
         while(sb.toString().contains(word)) {
             count++;
-            sb.deleteCharAt(word);
+            // sb.deleteCharAt(word);
         }
         System.out.println(count);
         
