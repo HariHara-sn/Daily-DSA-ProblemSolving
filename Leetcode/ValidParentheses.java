@@ -1,3 +1,4 @@
+// 20. Valid Parentheses
 public class ValidParentheses {
     public static boolean isOpen(char ch) {
         return (ch == '(' || ch == '[' || ch == '{') ? true : false;
