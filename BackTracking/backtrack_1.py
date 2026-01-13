@@ -19,7 +19,7 @@ def subsets(nums):
         # Choice 2: exclude nums[i]
         backtrack(i + 1)
 
-    backtrack(0)
+    backtrack(0) # this is initial fun call
     return result
 
 print(subsets([1, 2, 3]))
