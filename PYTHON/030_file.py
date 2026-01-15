@@ -1,0 +1,10 @@
+#ugly Number
+def isUgly(n: int) -> bool:
+    for factor in [2,3,5]:
+        while n % factor == 0:
+            n = n // factor
+    return n == 1
+
+
+n = 6
+print(isUgly(n))
