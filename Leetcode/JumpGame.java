@@ -11,7 +11,6 @@ public class JumpGame {
         } 
         return true;
     }
-    //Hi Hello
     public static void main(String[] args) {
         JumpGame jg = new JumpGame();
         int[] nums = {3, 2, 1, 0, 4};
