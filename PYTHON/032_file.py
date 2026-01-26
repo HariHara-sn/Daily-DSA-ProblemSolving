@@ -1,4 +1,4 @@
-#sub arr sum
+#continuous sub arr sum
 
 arr = [1, 2, 3]
 total = 0
