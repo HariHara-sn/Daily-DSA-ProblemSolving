@@ -7,12 +7,14 @@ def subsets(nums):
         # If we've decided for all items, record the subset
         if i == len(nums):
             result.append(current.copy())
+            print("result: ",result)
             return
 
         # Choice 1: include nums[i]
         current.append(nums[i])
+        print("curr append:", current)
         backtrack(i + 1)
-
+        print("curr before pop:", current)
         # Undo the choice (backtrack)
         current.pop()
 

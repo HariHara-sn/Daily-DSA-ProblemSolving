@@ -1,8 +1,5 @@
 // 520. Detect Capital
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
-
 public class DetectCapital {
 
     public static boolean isAllUpperCase(String s) {
