@@ -24,3 +24,26 @@ def addToArrayForm(self, num: List[int], k: int) -> List[int]:
             k //= 10
 
         return res
+'''
+This code solves - 140 / 152 testcases passed
+class Solution:
+    def arrToint(self, arr : List[int]):
+        num_str = ""
+        for i in arr:
+            num_str = num_str + str(i)
+        return num_str
+    def numTolist(self, num_str):
+        return [int(x) for x in num_str]
+
+
+    def addToArrayForm(self, num: List[int], k: int) -> List[int]:
+        total = int(self.arrToint(num)) + k
+        return self.numTolist(str(total))
+
+
+# Output:
+# Input: num = [1,2,0,0], k = 34
+# Output: [1,2,3,4]
+# Explanation: 1200 + 34 = 1234
+
+'''

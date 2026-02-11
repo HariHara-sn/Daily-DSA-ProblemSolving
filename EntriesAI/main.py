@@ -9,4 +9,3 @@ transpose = matrix
 for r in range(rows):
     for c in range(cols):
         transpose[c][r] = matrix[r][c]
-
