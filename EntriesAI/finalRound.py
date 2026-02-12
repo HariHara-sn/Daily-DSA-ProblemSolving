@@ -15,4 +15,3 @@ for i in order:
         freq[i] += 1
 print(freq)
 print(res)
-
