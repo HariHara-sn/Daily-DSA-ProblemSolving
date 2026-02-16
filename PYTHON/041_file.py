@@ -1,3 +1,4 @@
+#string compression
 input_string = "aaabbc"
 dict = {}
 

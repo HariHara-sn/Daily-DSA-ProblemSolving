@@ -15,4 +15,5 @@ n_list = list(map.values())
 
 
 print(n_list)
-print(map)
+
+# print(map)
