@@ -22,3 +22,12 @@ for i in name:
     if freq[i] == 1:
         print(i, "  ", name.index(i))
         break
+
+
+
+nums = [5,7,7,8,8,10]
+target = 8
+if target not in nums:
+    print([-1, -1])
+else:
+    print([nums.index(target), len(nums) - 1 - nums[::-1].index(target)])
