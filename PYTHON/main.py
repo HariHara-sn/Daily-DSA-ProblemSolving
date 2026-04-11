@@ -1,19 +1,24 @@
-# Find Repeating Element in Array
-arr = [1, 2, 3, 2, 4, 5, 1, 3, 3]
-unique = []
-repeated = []
+# merge two list
+nums1 = [1,2,3]
+nums2 = [2,5,6]
 
-for num in arr:
-    if num not in unique:
-        unique.append(num)
+merged = []
+h1 = 0
+h2 = 0
+while h1 < len(nums1) and h2 < len(nums2):
+    if nums1[h1] < nums2[h2]:
+        merged.append(nums1[h1])
+        h1 += 1
     else:
-        if num not in repeated:
-            repeated.append(num)
+        merged.append(nums2[h2])
+        h2 += 1
+    print(merged)
 
-print(repeated)
+while h1 < len(nums1):
+    merged.append(nums1[h1])
+    h1 += 1
 
-
-
-# without using #if num not in repeated:
-# output :  [2, 1, 3, 3]
-# with using #if num not in repeated:   [2, 1, 3]
+while h2 < len(nums2):
+    merged.append(nums2[h2])
+    h2 += 1
+print("final: ",merged)
