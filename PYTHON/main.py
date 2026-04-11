@@ -1,10 +1,19 @@
-#min and max in arr 
-arr = [10, 5, 30, 2, 15]
-maxima = -1
-minima = 1000
+# Find Repeating Element in Array
+arr = [1, 2, 3, 2, 4, 5, 1, 3, 3]
+unique = []
+repeated = []
+
 for num in arr:
-    if num > maxima:
-        maxima = num
-    if num < minima:
-        minima = num
-print(maxima, " ", minima)
+    if num not in unique:
+        unique.append(num)
+    else:
+        if num not in repeated:
+            repeated.append(num)
+
+print(repeated)
+
+
+
+# without using #if num not in repeated:
+# output :  [2, 1, 3, 3]
+# with using #if num not in repeated:   [2, 1, 3]
