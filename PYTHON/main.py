@@ -1,24 +1,11 @@
-# merge two list
-nums1 = [1,2,3]
-nums2 = [2,5,6]
+#move zero at end
+arr = [1,0,2,0,3,0,4,5]
 
-merged = []
-h1 = 0
-h2 = 0
-while h1 < len(nums1) and h2 < len(nums2):
-    if nums1[h1] < nums2[h2]:
-        merged.append(nums1[h1])
-        h1 += 1
-    else:
-        merged.append(nums2[h2])
-        h2 += 1
-    print(merged)
+arr2 = [0] * len(arr)
+idx = 0
+for i in range(len(arr)):
+    if arr[i] != 0:
+        arr2[idx] = arr[i]
+        idx += 1
 
-while h1 < len(nums1):
-    merged.append(nums1[h1])
-    h1 += 1
-
-while h2 < len(nums2):
-    merged.append(nums2[h2])
-    h2 += 1
-print("final: ",merged)
+print(arr2)
