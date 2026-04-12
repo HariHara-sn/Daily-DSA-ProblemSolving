@@ -1,12 +1,20 @@
-#move zero at end
-arr = [1,0,2,0,3,0,4,5]
+#MostCommonWord
+import re
+paragraph = "Bob hit a ball, the hit BALL flew far after it was hit.".lower()
+banned = ["hit","far"]
+#op : ball
 
-idx = 0
-for i in range(len(arr)):
-    if arr[i] != 0:
-        arr[idx] = arr[i]
-        idx += 1
-while idx < len(arr):
-    arr[idx] = 0
-    idx += 1
-print(arr)
+dmap = {}
+
+for word in paragraph.split():
+    word = re.sub("[^a-z\\s+]","",word)
+    dmap[word] = dmap.get(word, 0) + 1
+
+for bannedword in banned:
+    dmap.pop(bannedword)
+
+maxima = 0
+res = ""
+for k,v in dmap.items():
+    if v == max(dmap.values()):
+        print(k)
