@@ -1,3 +1,6 @@
+from ast import List
+
+
 class Solution:
     def duplicateZeros(self, arr: List[int]) -> None:
         res = []
